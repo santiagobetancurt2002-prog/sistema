@@ -1,15 +1,34 @@
 <?php
 include("conexion.php");
 
-// 1. Capturamos el ID que viene de la tabla
+$id = null;
+
+// 1. Buscamos el ID ya sea que venga por GET (URL) o por POST (Formulario)
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $sql = "SELECT * FROM guardar_factura WHERE id = $id";
-    $resultado = $conn->query($sql);
-    $factura = $resultado->fetch_assoc();
+} elseif (isset($_POST['id'])) {
+    $id = $_POST['id'];
 }
 
-// 2. Si el usuario presiona "Actualizar"
+// Si no hay ningún ID, regresamos a la tabla para evitar que la página se rompa
+if (!$id) {
+    header("Location: facturacion.php");
+    exit();
+}
+
+// 2. Traemos la información actual de la factura de la base de datos
+$sql = "SELECT * FROM guardar_factura WHERE id = $id";
+$resultado = $conn->query($sql);
+
+if ($resultado && $resultado->num_rows > 0) {
+    $factura = $resultado->fetch_assoc();
+} else {
+    // Si el ID no existe en la base de datos, regresamos
+    header("Location: facturacion.php");
+    exit();
+}
+
+// 3. Si el usuario presiona "Actualizar"
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_update = $_POST['id'];
     $n_factura = $_POST['numero_factura'];
@@ -26,57 +45,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($conn->query($sql_update) === TRUE) {
         header("Location: facturacion.php?mensaje=actualizado");
+        exit(); // Detiene la ejecución del script después de redireccionar
     } else {
         echo "Error actualizando: " . $conn->error;
     }
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Editar Factura</title>
-</head>
-<body class="bg-light">
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-warning text-dark">
-                    <h4 class="mb-0">Editar Factura #<?php echo $factura['numero_factura']; ?></h4>
-                </div>
-                <div class="card-body">
-                    <form method="POST">
-                        <input type="hidden" name="id" value="<?php echo $factura['id']; ?>">
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Número de Factura</label>
-                            <input type="text" name="numero_factura" class="form-control" value="<?php echo $factura['numero_factura']; ?>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Cliente</label>
-                            <input type="text" name="cliente" class="form-control" value="<?php echo $factura['cliente']; ?>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Proveedor</label>
-                            <input type="text" name="proveedor" class="form-control" value="<?php echo $factura['proveedor']; ?>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Valor</label>
-                            <input type="number" step="0.01" name="valor" class="form-control" value="<?php echo $factura['valor']; ?>" required>
-                        </div>
-                        
-                        <div class="d-flex justify-content-between">
-                            <a href="facturacion.php" class="btn btn-secondary">Cancelar</a>
-                            <button type="submit" class="btn btn-warning">Actualizar Factura</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-</body>
-</html>
