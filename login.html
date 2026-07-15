@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<title>Inicio de sesión</title>
+</head>
+
+<body>
+
+<div class="container vh-100 d-flex justify-content-center align-items-center">
+<div class="col-12 col-sm-8 col-md-6 col-lg-4">
+
+<form action="validarlogin.php" method="POST">
+
+<div class="mb-4">
+<label class="form-label">Correo electrónico</label>
+<input type="email" name="correoelectronico" class="form-control" required>
+</div>
+
+<div class="mb-4">
+<label class="form-label">Contraseña</label>
+<input type="password" name="contrasena" class="form-control" required>
+</div>
+
+<button type="submit" class="btn btn-primary w-100">
+Iniciar sesión
+</button>
+
+</p>
+</form>
+<p class="text-center mt-3">
+  ¿No tienes cuenta?
+  <a href="crearusuario.html" class="btn btn-primary w-80">Crear usuario</a>
+</div>
+</div>
+
+</body>
+</html>
